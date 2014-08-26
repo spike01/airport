@@ -1,5 +1,6 @@
 require 'airport'
 require 'plane'
+require 'weather'
 
 # A plane currently in the airport can be requested to take off.
 #
@@ -9,18 +10,20 @@ require 'plane'
 # If the airport is full then no planes can land
 describe Airport do
 
+  include Weather
+
   let(:airport) { Airport.new }
-  let(:plane_double) { double :plane }
+  let(:plane) { Plane.new }
 
   context 'taking off and landing' do
     it 'a plane can land' do
-      airport.land(plane_double)
+      airport.land(plane)
       expect(airport.hangar.count).to eq(1)
     end
     
     it 'a plane can take off' do
-      airport.land(plane_double)
-      airport.take_off(plane_double)
+      airport.land(plane)
+      airport.take_off(plane)
       expect(airport.hangar.count).to eq(0)
     end
     
@@ -28,9 +31,10 @@ describe Airport do
   
   context 'traffic control' do
     it 'a plane cannot land if the airport is full' do
-      airport.hangar=([:plane1, :plane2, :plane3])
-      expect{airport.land(plane_double)}.to raise_error(RuntimeError)
+      (airport.capacity).times { airport.land(Plane.new) }
+      expect{airport.land(plane)}.to raise_error(RuntimeError)
     end 
+
     # Include a weather condition using a module.
     # The weather must be random and only have two states "sunny" or "stormy".
     # Try and take off a plane, but if the weather is stormy, the plane can not take off and must remain in the airport.
@@ -38,11 +42,14 @@ describe Airport do
     # This will require stubbing to stop the random return of the weather.
     # If the airport has a weather condition of stormy,
     # the plane can not land, and must not be in the airport
+    
     context 'weather conditions' do
-      xit 'a plane cannot take off when there is a storm brewing' do
+      it 'a plane cannot take off when there is a storm brewing' do
+        allow(airport).to receive(:weather).and_return(:stormy)
+        expect(airport.take_off(plane)).to eq("Bad weather. Please try again later")
       end
       
-      xit 'a plane cannot land in the middle of a storm' do
+      it 'a plane cannot land in the middle of a storm' do
       end
     end
   end
