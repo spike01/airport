@@ -118,21 +118,31 @@ end
 describe "The grand finale (last spec)" do
 
   let(:airport) { Airport.new }
-  let(:red_arrows) { [] }
+  let(:sky) { [] }
 
   def make_planes
-    6.times { red_arrows << Plane.new }
+    6.times { sky << Plane.new }
   end
 
-  it 'the airport can land all planes in an array, in good weather' do
+  it 'the airport can land all planes in the sky, in good weather' do
     allow(airport).to receive(:weather).and_return(:sunny) 
     make_planes
-    airport.land_all_planes(red_arrows)
+    airport.land_all_planes(sky)
     expect(airport.hangar.count).to eq(6)
+    expect(sky.count).to eq(0)
   end
 
-  xit 'the airport can land all planes in an array' do
-    land_planes(red_arrows)
+  it 'the airport can have all planes take off, in good weather' do
+    allow(airport).to receive(:weather).and_return(:sunny)
+    make_planes
+    airport.fly_all_planes
+    expect(airport.hangar.count).to eq(0)
+  end
+
+  it 'the airport can land all planes in the sky' do
+    make_planes
+    airport.land_all_planes(sky)
+    expect(airport.hangar.count).to eq(6)
   end
                                                                      
                                                                      #def land_planes

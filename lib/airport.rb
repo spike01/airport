@@ -17,18 +17,24 @@ class Airport
   def land(plane)
     return "Airport full. Please try again later" if hangar.count >= capacity 
     return "Bad weather. Please try again later" if weather == :stormy
-    @hangar << plane
+    hangar << plane
     plane.flight_status= :landed
   end
 
   def take_off(plane)
     return "Bad weather. Please try again later" if weather == :stormy
-    @hangar.delete(plane)
+    hangar.delete(plane)
     plane.flight_status= :flying
   end
 
-  def land_all_planes(planes)
-    planes.each { |plane| land(plane); planes.shift }
+  def land_all_planes(sky)
+    sky.delete_if do |plane|
+      true 
+      land(plane) 
+    end
   end
 
+  def fly_all_planes
+    hangar.each { |plane| take_off(plane) }
+  end
 end
