@@ -1,6 +1,6 @@
 class Plane
 
-  attr_reader :flight_status
+  attr_accessor :flight_status
 
   def initialize
     @flight_status = :flying
