@@ -127,46 +127,53 @@ end
 
 describe "The grand finale (last spec)" do
 
-  let(:airport) { Airport.new }
+  let(:airport) { Airport.new(capacity: 6) }
   let(:sky) { [] }
 
   def make_planes
     6.times { sky << Plane.new }
   end
 
-  it 'the airport can land all planes in the sky, in good weather' do
-    allow(airport).to receive(:weather).and_return(:sunny) 
-    make_planes
-    airport.land_all_planes(sky)
-    expect(airport.hangar.count).to eq(6)
-    expect(sky.count).to eq(0)
+  context 'building methods that will eventually launch everything' do
+
+    it 'the airport can land all planes in the sky, in good weather' do
+      allow(airport).to receive(:weather).and_return(:sunny) 
+      make_planes
+      airport.land_all_planes(sky)
+      expect(airport.hangar.count).to eq(6)
+      expect(sky.count).to eq(0)
+    end
+
+    it 'the airport can have all planes take off, in good weather' do
+      allow(airport).to receive(:weather).and_return(:sunny)
+      make_planes
+      airport.fly_all_planes
+      expect(airport.hangar.count).to eq(0)
+    end
+
+    it 'the airport can (eventually) land all planes in any weather' do
+      make_planes
+      airport.land_all_planes(sky)
+      expect(airport.hangar.count).to eq(6)
+    end
+                                                                       
+    it 'the airport can (eventually) fly all its planes in any weather' do
+      make_planes
+      airport.land_all_planes(sky)
+      airport.fly_all_planes
+      expect(airport.hangar.count).to eq(0)
+    end
+
   end
 
-  it 'the airport can have all planes take off, in good weather' do
-    allow(airport).to receive(:weather).and_return(:sunny)
-    make_planes
-    airport.fly_all_planes
-    expect(airport.hangar.count).to eq(0)
-  end
+  context 'THE FINAL ONE' do
 
-  it 'the airport can (eventually) land all planes in any weather' do
-    make_planes
-    airport.land_all_planes(sky)
-    expect(airport.hangar.count).to eq(6)
-  end
-                                                                     
-  it 'the airport can (eventually) fly all its planes in any weather' do
-    make_planes
-    airport.land_all_planes(sky)
-    airport.fly_all_planes
-    expect(airport.hangar.count).to eq(0)
-  end
-
-  it 'all planes can land and all planes can take off' do
-    make_planes
-    airport.land_all_planes(sky)
-    expect(airport.hangar.map { |plane| plane.flight_status }).to eq([:landed, :landed, :landed, :landed, :landed, :landed])
-    airport.fly_all_planes
-    expect(airport.hangar.count).to eq(0) # I don't know where my planes are! ...but I'm pretty sure they're flying
+    it 'all planes can land and all planes can take off' do
+      make_planes
+      airport.land_all_planes(sky)
+      expect(airport.hangar.map { |plane| plane.flight_status }).to eq([:landed, :landed, :landed, :landed, :landed, :landed])
+      airport.fly_all_planes
+      expect(airport.hangar.count).to eq(0) # I don't know where my planes are! ...but I'm pretty sure they're flying!
+    end
   end
 end

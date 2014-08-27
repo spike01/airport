@@ -29,8 +29,6 @@ class Airport
     plane.flight_status= :flying
   end
 
-# Methods below are helper methods for final test
-
   def land_all_planes(planes)
     return if planes.empty?
     planes.each do |plane| 
