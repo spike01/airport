@@ -12,17 +12,20 @@ require 'weather'
 describe Airport do
 
   let(:airport) { Airport.new }
-  let(:plane) { Plane.new }
+  let!(:plane) { double :plane, flight_status: nil }
 
   context 'taking off and landing' do
     it 'a plane can land' do
       allow(airport).to receive(:weather).and_return(:sunny)
+            allow(plane).to receive(:flight_status=)
+
       airport.land(plane)
       expect(airport.hangar.count).to eq(1)
     end
     
     it 'a plane can take off' do
       allow(airport).to receive(:weather).and_return(:sunny)
+      allow(plane).to receive(:flight_status=)
       airport.land(plane)
       airport.take_off(plane)
       expect(airport.hangar.count).to eq(0)
@@ -46,7 +49,8 @@ describe Airport do
   context 'traffic control' do
     it 'a plane cannot land if the airport is full' do
       allow(airport).to receive(:weather).and_return(:sunny)
-      (airport.capacity).times { airport.land(Plane.new) }
+      allow(plane).to receive(:flight_status=)
+      (airport.capacity).times { airport.land(plane) }
       expect(airport.land(plane)).to eq("Airport full. Please try again later")
     end 
   end
@@ -62,6 +66,7 @@ describe Airport do
     context 'weather conditions' do
       it 'a plane cannot take off when there is a storm brewing' do
         allow(airport).to receive(:weather).and_return(:sunny)
+        allow(plane).to receive(:flight_status=).with(:landed)
         airport.land(plane)
         allow(airport).to receive(:weather).and_return(:stormy)
         expect(airport.take_off(plane)).to eq("Bad weather. Please try again later")

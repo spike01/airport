@@ -25,8 +25,7 @@ class Airport
   def take_off(plane)
     raise "This plane is already in the air!" if plane.flight_status == :flying
     return "Bad weather. Please try again later" if weather == :stormy
-    hangar.delete(plane)
-    plane.flight_status= :flying
+    hangar.delete(plane).flight_status = :flying
   end
 
   def land_all_planes(planes)
