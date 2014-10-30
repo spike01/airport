@@ -17,8 +17,7 @@ describe Airport do
   context 'taking off and landing' do
     it 'a plane can land' do
       allow(airport).to receive(:weather).and_return(:sunny)
-            allow(plane).to receive(:flight_status=)
-
+      allow(plane).to receive(:flight_status=)
       airport.land(plane)
       expect(airport.hangar.count).to eq(1)
     end
